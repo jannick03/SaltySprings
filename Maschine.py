@@ -3,7 +3,8 @@ class Maschine:
         self._id = id
         self._name = name
         self._funktion = funktion
-        self.status = status
+        self._status = None
+        self.set_status(status)
 
     @property
     def id(self) -> int:
@@ -17,8 +18,14 @@ class Maschine:
     def funktion(self) -> str:
         return self._funktion
 
+    @property
+    def status(self) -> str:
+        return self._status
+
     def set_status(self, status: str):
-        self.status = status
+        if status not in ["offline", "online"]:
+            raise ValueError("Status must be 'offline' or 'online'.")
+        self._status = status
 
     def execute_function(self):
         return f"Maschine {self.id} ({self.name}) is performing its function: {self.funktion}"

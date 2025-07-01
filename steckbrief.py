@@ -9,6 +9,6 @@ class steckbrief:
     def __str__(self):
         result = f"Steckbrief ID: {self.id}\n"
         result += "Erkannte Objekte:\n"
-        for id, name in self.items:
-            result += f"ID: {id}, Name: {name}\n"
+        for class_id, name in self.items:
+            result += f"ID: {class_id}, Name: {name}\n"
         return result

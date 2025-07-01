@@ -31,10 +31,10 @@ while True:
 
         detected_items = []
         with open("predicted_classes.txt", "w") as f:
-            for no in class_ids:
-                name = model.names[no]
-                f.write(f"{no} : {model.names[no]}\n")
-                detected_items.append((no, name))  # Save for the class
+            for class_id in class_ids:
+                name = model.names[class_id]
+                f.write(f"{class_id} : {model.names[class_id]}\n")
+                detected_items.append((class_id, name))  # Save for the class
 
         steckbriefe.append(steckbrief(detected_items))
 

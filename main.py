@@ -1,13 +1,16 @@
 from ultralytics import YOLO
 import cv2
+from steckbrief import steckbrief
 
-//model = YOLO("C:\\Users\\andre\\PycharmProjects\\SaltySprings\\weights.pt")
+model = YOLO("C:\\Users\\andre\\PycharmProjects\\SaltySprings\\weights.pt")
 
 cap = cv2.VideoCapture(0)
 
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
+
+steckbriefe = []
 
 while True:
     ret, frame = cap.read()
@@ -17,24 +20,33 @@ while True:
 
     results = model(frame)
     annotated_frame = results[0].plot()
+    key = cv2.waitKey(1) & 0xFF
 
-    if cv2.waitKey(1) & 0xFF == ord('p'):
+    if key == ord('p'):
         # Get class indices from results
         class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
 
         # Get class names from model
         class_names = [model.names[c] for c in class_ids]
 
-        # Save class names to a text file (overwrites each frame)
+        detected_items = []
         with open("predicted_classes.txt", "w") as f:
-            for name in class_names:
-                f.write(f"{name}\n")
-        break
+            for no in class_ids:
+                name = model.names[no]
+                f.write(f"{no} : {model.names[no]}\n")
+                detected_items.append((no, name))  # Save for the class
+
+        steckbriefe.append(steckbrief(detected_items))
 
     cv2.imshow("YOLOv8 Live", annotated_frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if key == ord('q'):
         break
+
+
+
+for sb in steckbriefe:
+    print(sb)
 
 cap.release()
 cv2.destroyAllWindows()

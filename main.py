@@ -1,8 +1,12 @@
 from ultralytics import YOLO
 import cv2
 from steckbrief import steckbrief
+import os
 
-model = YOLO("C:\\Users\\andre\\PycharmProjects\\SaltySprings\\weights.pt")
+base_path = os.path.dirname(__file__)
+weights_path = os.path.join(base_path, "weights.pt")
+
+model = YOLO(weights_path)
 
 cap = cv2.VideoCapture(0)
 

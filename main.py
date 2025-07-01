@@ -33,7 +33,6 @@ while True:
         with open("predicted_classes.txt", "w") as f:
             for class_id in class_ids:
                 name = model.names[class_id]
-                f.write(f"{class_id} : {model.names[class_id]}\n")
                 detected_items.append((class_id, name))  # Save for the class
 
         steckbriefe.append(steckbrief(detected_items))
@@ -42,8 +41,6 @@ while True:
 
     if key == ord('q'):
         break
-
-
 
 for sb in steckbriefe:
     print(sb)

@@ -14,6 +14,6 @@ class box:
     def __str__(self):
         result = f"Box ID: {self.id}\n"
         result += "Erkannte Objekte:\n"
-        for class_id, name in self.items:
-            result += f"ID: {class_id}, Name: {name}\n"
+        for comp in self.items:
+            result += f"ID: {comp.component_id}, Name: {comp.name}\n"
         return result

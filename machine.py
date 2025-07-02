@@ -1,4 +1,4 @@
-from product import product
+import product
 
 
 class machine:
@@ -14,7 +14,7 @@ class machine:
             raise ValueError("Status must be 'offline' or 'online'.")
         self.status = status
 
-    def execute_function(self, product: 'product'):
+    def execute_function(self, product: 'product.product'):
         if product.production_steps:
             current_step = product.production_steps.pop(0)  # Remove the first step
             return f"Maschine {self.id} ({self.name}) is performing step '{current_step}' for product '{product.name}'."

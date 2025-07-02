@@ -21,7 +21,7 @@ rdy_new = True
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
-
+"""
 boxes = [box.box([components.component(0, "Anker Typ 7"), components.component(1, "Buerstenhalter"),
                   components.component(2, "Getriebedeckel Typ 6"), components.component(3, "Getriebehause typ 10"),
                   components.component(4, "Getriebehause typ 6"), components.component(5, "Getriebehause typ 9"),
@@ -29,10 +29,11 @@ boxes = [box.box([components.component(0, "Anker Typ 7"), components.component(1
                   components.component(8, "spange")]),
          box.box([components.component(6, "Magnet Lang"), components.component(7, "Poltopf-Lang"),
                   components.component(8, "spange")])]
+"""
 machines = [machine.machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"),
             machine.machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", )]
 
-
+boxes = []
 seen_classes = set()
 photo_counter = 0
 while True:
@@ -90,7 +91,6 @@ while True:
     seen_classes = current_classes
 
     cv2.imshow("YOLOv8 Live", annotated_frame)
-    time.sleep(1)
     if key == ord('q'):
         break
 

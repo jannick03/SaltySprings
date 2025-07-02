@@ -1,6 +1,6 @@
 from queue import Queue
-from machine import Maschine
-from product import Product
+from machine import machine
+from product import product
 
 class Hub:
     # Public attributes
@@ -27,7 +27,7 @@ class Hub:
                 for product in self.product_queue: # check if any products is in queue for this machine
                     if machine.can_produce(product): # check if machine can produce this product
                         for item in product.items:
-                            #send items to machine machine
+                            pass #send items to machine machine
                         
 # checking if machines are producing
 # checking current state of items and products
@@ -35,12 +35,12 @@ class Hub:
 
 
 
-    def check_machines_needed_for_product(self, product: Product) -> Hub:
+    def check_machines_needed_for_product(self, product: product) -> Hub:
         for product in self.product_queue:
-            if (product.next_production == connected_machines):#check which machines are needed for the next prouction step
-                return self;
+            if (product.next_production == self.connected_machines):#check which machines are needed for the next prouction step
+                return self
             else : 
                 for hub in self.hubs:
                     if (product.next_production == hub.connected_machines):
-                        return hub;    
+                        return hub
         

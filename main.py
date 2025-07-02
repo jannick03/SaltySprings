@@ -11,21 +11,24 @@ from machine import machine
 def is_significantly_different(set_a, set_b, tolerance):
     return len(set_a.symmetric_difference(set_b)) >= tolerance
 
+
 base_path = os.path.dirname(__file__)
 weights_path = os.path.join(base_path, "weights.pt")
 model = YOLO(weights_path)
 cap = cv2.VideoCapture(1)
+rdy_new = True
 
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
 boxes = [box([component(0, "Anker Typ 7"), component(1, "Buerstenhalter"), component(2, "Getriebedeckel Typ 6"),
-              component(3, "Getriebehause typ 10"), component(4, "Getriebehause typ 6"), component(5, "Getriebehause typ 9"),
-              component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")]),
-        box([component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")])
-          ]
-machines = [machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"), machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", "offline")]
+              component(3, "Getriebehause typ 10"), component(4, "Getriebehause typ 6"),
+              component(5, "Getriebehause typ 9"), component(6, "Magnet Lang"), component(7, "Poltopf-Lang"),
+              component(8, "spange")]),
+         box([component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")])]
+machines = [machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"),
+            machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", )]
 
 
 seen_classes = set()
@@ -42,7 +45,7 @@ while True:
     current_classes = set(results[0].boxes.cls.cpu().numpy().astype(int))
     new_classes = current_classes - seen_classes
 
-    if is_significantly_different(current_classes, seen_classes, tolerance=1):
+    if is_significantly_different(current_classes, seen_classes, tolerance=1) & rdy_new:
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         filename = f"photo_{timestamp}_{photo_counter}.jpg"
         cv2.imwrite(filename, frame)
@@ -59,6 +62,9 @@ while True:
 
         if len(components) != 0:
             boxes.append(box(components))
+            rdy_new = False
+        else:
+            rdy_new = True
 
     seen_classes = current_classes
 
@@ -73,4 +79,3 @@ for box in boxes:
 
 cap.release()
 cv2.destroyAllWindows()
-

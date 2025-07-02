@@ -6,6 +6,7 @@ import box
 import time
 import os
 import machine
+import GUI
 
 
 def is_significantly_different(set_a, set_b, tolerance):
@@ -71,12 +72,7 @@ while True:
         rdy_new = True
 
     if is_significantly_different(current_classes, seen_classes, tolerance=1) & rdy_new:
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
-        filename = f"photo_{timestamp}_{photo_counter}.jpg"
-        cv2.imwrite(filename, frame)
-        print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
-        photo_counter += 1
-
+        print("OK")
         class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
         class_names = [model.names[c] for c in class_ids]
 
@@ -86,10 +82,19 @@ while True:
             comps.append(components.component(class_id, name))  # Save for the class
 
         if len(comps) > 0:
+            timestamp = time.strftime("%Y%m%d-%H%M%S")
+            filename = f"photo_{timestamp}_{photo_counter}.jpg"
+            cv2.imwrite(filename, frame)
+            print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
+            photo_counter += 1
             boxes.append(box.box(comps))
+
         rdy_new = False
 
     seen_classes = current_classes
+
+    GUI.update_boxes_display(boxes)
+    GUI.gui_loop()
 
     cv2.imshow("YOLOv8 Live", annotated_frame)
     if key == ord('q'):

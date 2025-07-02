@@ -14,6 +14,7 @@ def update_boxes_display(boxes):
     text_area.delete('1.0', tk.END)
     for i, scanned_box in enumerate(boxes[-10:]):  # last 10 scanned boxes
         comp_names = ", ".join([comp.name for comp in scanned_box.components])
+
         text_area.insert(tk.END, f"Box {i+1}: {comp_names}\n")
 
 # This function will be called periodically from the main loop to keep GUI responsive

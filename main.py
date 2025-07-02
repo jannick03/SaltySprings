@@ -68,11 +68,10 @@ while True:
     key = cv2.waitKey(1) & 0xFF
     new_classes = current_classes - seen_classes
 
-    if not current_classes:
+    if current_classes:
         rdy_new = True
 
-    if is_significantly_different(current_classes, seen_classes, tolerance=1) & rdy_new:
-        print("OK")
+    if is_significantly_different(current_classes, seen_classes, tolerance=0) & rdy_new:
         class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
         class_names = [model.names[c] for c in class_ids]
 

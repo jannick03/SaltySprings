@@ -4,6 +4,7 @@ from product import product
 from productionstep import production_step
 from typing import TYPE_CHECKING, List
 import box
+from Hub import Hub
 
 if TYPE_CHECKING:
     import machine
@@ -20,17 +21,21 @@ class Hub:
     product_list: list # list of products # eine liste an anstehenden Produkten, kann auch in Aufträgen wieter klassifiziert werden
     tasks: list[order]  # List of product to be produced
 
-    def __init__(self, id: str, machines: list, hubs: list, queue: List['box.box'], machines_producing: list, products_in_production: list):
+
+    def __init__(self, id: str, machines: list, hubs: list, queue: list, machines_producing: list, products_in_production: list, product_list: list, tasks: list[order]):
         self.id = id
         self.machines = machines
         self.hubs = hubs
         self.queue = queue
         # self.machines_producing = machines_producing
         self.products_in_production = products_in_production
+        self.product_list = product_list
+        self.tasks = tasks
 
     def loop(self) -> None:
         if self.tasklist:
             self.initiate_production()
+            self.delegate()
             
             # check if products needs to be produced at this hub or at another hub
             for product in self.product_list: # check if any products is in queue
@@ -55,12 +60,20 @@ class Hub:
                         self.products_in_production.append(product)
                         self.remove_used_components(current_needed_components)
 
-# checking if machines are producing
+    def delegate(self):
+        for product in self.queue:
+            if self.machines.__contains__(product.current_productionstep[product.current_step].workstation) :
+                continue
+            else :
+                if self.check_machines_needed_for_product(product)
+
+
+    # checking if machines are producing
 # checking current state of items and products
 # check if product needs machines of other hubs
 
     # check if hub has needed machines
-    def check_machines_needed_for_product(self, product: product) -> 'Hub':
+    def check_machines_needed_for_product(self, product: product) -> Hub:
         for product in self.products_in_production:
             if (product.production_steps == self.machines): #check which machines are needed for the next production step
                 return self
@@ -86,19 +99,15 @@ class Hub:
         self.products_in_production.remove(product)
         self.product_list.append(product)
 
-
-
-
-
     # # check if hub has needed machines
-    # def check_machines_needed_for_product(self, product: product) -> Hub:
-    #     for product in self.product_list:
-    #         if (product.production_steps == connected_machines): #check which machines are needed for the next prouction step
-    #             return self;
-    #         else :
-    #             for hub in self.hubs:
-    #                 if (product.next_production == hub.connected_machines):
-    #                     return hub
+    def check_machines_needed_for_product(self, product: product) -> Hub:
+        for product in self.product_list:
+            if (product.production_steps == connected_machines): #check which machines are needed for the next prouction step
+                return self;
+            else :
+                for hub in self.hubs:
+                    if (product.next_production == hub.connected_machines):
+                        return hub
 
     # checks which machines are producing (accessible form this(self) hub)
     def get_producing_machines(self) -> list:

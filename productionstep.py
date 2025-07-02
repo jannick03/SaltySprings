@@ -1,6 +1,6 @@
 from Maschine import Maschine
 
-class production_steps:
+class production_step:
     step_id = 1
 
     def __init__(self, name: str, description: str, workstation: Maschine):

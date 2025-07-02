@@ -1,5 +1,4 @@
-from machine import machine
-
+import machine
 class production_step:
     step_id = 1
 

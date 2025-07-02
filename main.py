@@ -5,7 +5,7 @@ import cv2
 from box import box
 import time
 import os
-from machine import machine
+import machine
 
 
 def is_significantly_different(set_a, set_b, tolerance):
@@ -15,7 +15,7 @@ def is_significantly_different(set_a, set_b, tolerance):
 base_path = os.path.dirname(__file__)
 weights_path = os.path.join(base_path, "weights.pt")
 model = YOLO(weights_path)
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 rdy_new = True
 
 if not cap.isOpened():
@@ -27,8 +27,8 @@ boxes = [box([component(0, "Anker Typ 7"), component(1, "Buerstenhalter"), compo
               component(5, "Getriebehause typ 9"), component(6, "Magnet Lang"), component(7, "Poltopf-Lang"),
               component(8, "spange")]),
          box([component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")])]
-machines = [machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"),
-            machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", )]
+machines = [machine.machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"),
+            machine.machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", )]
 
 
 seen_classes = set()

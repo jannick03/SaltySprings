@@ -1,5 +1,6 @@
 from product import product
 
+
 class machine:
     def __init__(self, id: int, name: str, funktion: str, status: str = "offline"):
         self.id = id

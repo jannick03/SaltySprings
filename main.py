@@ -1,8 +1,8 @@
 from typing import List
-from components import component
+import components
 from ultralytics import YOLO
 import cv2
-from box import box
+import box
 import time
 import os
 import machine
@@ -22,11 +22,13 @@ if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
-boxes = [box([component(0, "Anker Typ 7"), component(1, "Buerstenhalter"), component(2, "Getriebedeckel Typ 6"),
-              component(3, "Getriebehause typ 10"), component(4, "Getriebehause typ 6"),
-              component(5, "Getriebehause typ 9"), component(6, "Magnet Lang"), component(7, "Poltopf-Lang"),
-              component(8, "spange")]),
-         box([component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")])]
+boxes = [box.box([components.component(0, "Anker Typ 7"), components.component(1, "Buerstenhalter"),
+                  components.component(2, "Getriebedeckel Typ 6"), components.component(3, "Getriebehause typ 10"),
+                  components.component(4, "Getriebehause typ 6"), components.component(5, "Getriebehause typ 9"),
+                  components.component(6, "Magnet Lang"), components.component(7, "Poltopf-Lang"),
+                  components.component(8, "spange")]),
+         box.box([components.component(6, "Magnet Lang"), components.component(7, "Poltopf-Lang"),
+                  components.component(8, "spange")])]
 machines = [machine.machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"),
             machine.machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", )]
 
@@ -55,13 +57,13 @@ while True:
         class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
         class_names = [model.names[c] for c in class_ids]
 
-        components: List['components'] = []
+        comps: List['components'] = []
         for class_id in class_ids:
             name = model.names[class_id]
-            components.append(component(class_id, name))  # Save for the class
+            comps.append(components.component(class_id, name))  # Save for the class
 
-        if len(components) != 0:
-            boxes.append(box(components))
+        if len(comps) != 0:
+            boxes.append(box.box(comps))
             rdy_new = False
         else:
             rdy_new = True

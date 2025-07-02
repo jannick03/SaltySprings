@@ -37,6 +37,9 @@ machines = [machine.machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse 
 boxes = []
 seen_classes = set()
 photo_counter = 0
+last_photo_time = 0
+photo_interval = 3
+
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -71,22 +74,27 @@ while True:
     if current_classes:
         rdy_new = True
 
-    if is_significantly_different(current_classes, seen_classes, tolerance=0) & rdy_new:
-        class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
-        class_names = [model.names[c] for c in class_ids]
+    current_time = time.time()
+    if is_significantly_different(current_classes, seen_classes, tolerance=1) & rdy_new:
+        if current_time - last_photo_time >= photo_interval:
+            class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
+            class_names = [model.names[c] for c in class_ids]
 
-        comps: List['components'] = []
-        for class_id in class_ids:
-            name = model.names[class_id]
-            comps.append(components.component(class_id, name))  # Save for the class
+            comps: List['components'] = []
+            for class_id in class_ids:
+                name = model.names[class_id]
+                comps.append(components.component(class_id, name))
 
-        if len(comps) > 0:
-            timestamp = time.strftime("%Y%m%d-%H%M%S")
-            filename = f"photo_{timestamp}_{photo_counter}.jpg"
-            cv2.imwrite(filename, frame)
-            print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
-            photo_counter += 1
-            boxes.append(box.box(comps))
+            if len(comps) > 0:
+                timestamp = time.strftime("%Y%m%d-%H%M%S")
+                filename = f"photo_{timestamp}_{photo_counter}.jpg"
+                cv2.imwrite(filename, frame)
+                print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
+                photo_counter += 1
+                boxes.append(box.box(comps))
+
+            last_photo_time = current_time
+            rdy_new = False
 
         rdy_new = False
 

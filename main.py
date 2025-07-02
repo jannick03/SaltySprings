@@ -6,7 +6,10 @@ import box
 import time
 import os
 import machine
-import GUI
+import hub_dashboard
+import product
+from Hub import Hub
+from productionstep import production_step
 
 
 def is_significantly_different(set_a, set_b, tolerance):
@@ -40,7 +43,35 @@ photo_counter = 0
 last_photo_time = 0
 photo_interval = 3
 
+# Create machines exactly as in main.py
+m = [
+    machine.machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"),
+    machine.machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline")
+]
+
+# Create production steps with needed components
+production_steps = [
+    production_step("Spritzguss Getriebegehäuse", "Spritzguss der Getriebegehäuseteile", machines[0],
+                    [components.component(0, "Anker Typ 7"), components.component(1, "Buerstenhalter"),
+                     components.component(2, "Getriebedeckel Typ 6")]),
+    production_step("Rotorwicklung", "Kupferwicklung des Rotors für den Motor", machines[1],
+                    [components.component(0, "Anker Typ 7"), components.component(1, "Buerstenhalter"),
+                     components.component(2, "Getriebedeckel Typ 6")])
+]
+
+# Create products exactly as in main.py
+products_in_production = [
+    product.product("Motorgetriebe", production_steps,
+                    [components.component(0, "Anker Typ 7"), components.component(1, "Buerstenhalter"),
+                     components.component(2, "Getriebedeckel Typ 6")])
+]
+
+# Create Hub0 exactly as in main.py
+hub0 = Hub("0", m, [], boxes, [], products_in_production)
+dashboard = hub_dashboard.HubDashboard(hub0)
+
 while True:
+    dashboard.run()
     ret, frame = cap.read()
     if not ret:
         print("Cannot read camera")
@@ -91,7 +122,8 @@ while True:
                 cv2.imwrite(filename, frame)
                 print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
                 photo_counter += 1
-                boxes.append(box.box(comps))
+                hub0.add_to_q(box.box(comps))
+                print("ADDED____________________________________________________________________________________")
 
             last_photo_time = current_time
             rdy_new = False
@@ -100,15 +132,9 @@ while True:
 
     seen_classes = current_classes
 
-    GUI.update_boxes_display(boxes)
-    GUI.gui_loop()
-
     cv2.imshow("YOLOv8 Live", annotated_frame)
     if key == ord('q'):
         break
-
-for box in boxes:
-    print(box)
 
 cap.release()
 cv2.destroyAllWindows()

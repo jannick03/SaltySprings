@@ -216,7 +216,7 @@ class HubDashboard:
             for machine in self.hub.machines:
                 status_color = 'green' if machine.status == 'online' else 'red'
                 self.machines_tree.insert('', 'end', values=(
-                    machine.id, 
+                    machine.mashine_id,
                     machine.name, 
                     machine.funktion, 
                     machine.status
@@ -359,7 +359,7 @@ class HubDashboard:
     
     def run(self):
         """Start the dashboard"""
-        self.root.mainloop()
+        self.root.update()
 
 
 # Function to create dashboard from main.py

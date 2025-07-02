@@ -2,7 +2,8 @@
 from queue import Queue
 from product import product
 from productionstep import production_step
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
+import box
 
 if TYPE_CHECKING:
     import machine
@@ -19,7 +20,7 @@ class Hub:
     product_list: list # list of products # eine liste an anstehenden Produkten, kann auch in Aufträgen wieter klassifiziert werden
     tasks: list[order]  # List of product to be produced
 
-    def __init__(self, id: str, machines: list, hubs: list, queue: Queue, machines_producing: list, products_in_production: list):
+    def __init__(self, id: str, machines: list, hubs: list, queue: List['box.box'], machines_producing: list, products_in_production: list):
         self.id = id
         self.machines = machines
         self.hubs = hubs
@@ -151,3 +152,6 @@ class Hub:
     @tasklist.setter
     def tasklist(self, value):
         pass
+
+    def add_to_q(self, box):
+        self.queue.append(box)

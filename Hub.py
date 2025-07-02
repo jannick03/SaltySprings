@@ -1,9 +1,8 @@
-from queue import queue
+from Queue import queue
 from machine import machine
 from queue import Queue
 from product import product
-from Hub import Hub
-from productionstep import productionstep
+from productionstep import production_step
 
 class Hub:
     # Public attributes
@@ -41,28 +40,23 @@ class Hub:
     def initiate_production(self) -> None:
         for machine in self.machines: # check if any machines in free or producing
             if machine.status == "offline": # check if machine is online
-                for product in self.product_queue: # check if any products is in queue for this machine
-                    if product.current_step.workstation == machine : # check if machine can produce this product
-                        for item in product.components_at_step.get(product.current_step): # check if machine has all items needed for this product
-                                if item not in item_queue_current_steps[product.current_step]: # check if item is available in the queue
-                                    break  # if an item for a product is not available, break the loop
-                            
-                        current_needed_items = product.item_queue_current_steps[product.current_step]
-                        machine.execute_funktion(product, current_needed_items)  # start production if all items are available                        
+                # TODO: Implement production logic
+                pass                        
     
 # checking if machines are producing
 # checking current state of items and products
 # check if product needs machines of other hubs
 
     # check if hub has needed machines
-    def check_machines_needed_for_product(self, product: product) -> Hub:
-        for product in self.product_queue:
-            if (product.production_steps == connected_machines): #check which machines are needed for the next prouction step
-                return self;
+    def check_machines_needed_for_product(self, product: product) -> 'Hub':
+        for product in self.products_in_production:
+            if (product.production_steps == self.machines): #check which machines are needed for the next production step
+                return self
             else : 
                 for hub in self.hubs:
-                    if (product.next_production == hub.connected_machines):
+                    if (product.production_steps == hub.machines):
                         return hub
+        return self
     
     # checks which machines are producing (accessible form this(self) hub)
     def get_producing_machines(self) -> list:
@@ -73,21 +67,19 @@ class Hub:
         return producing_machines
     
 
-    def get_production_step_of(product) -> productionstep: 
+    def get_production_step_of(self, product) -> production_step: 
         return product.current_step;
 
     def needed_products_for_next_step(self, product: product) -> list:
         needed_products = []
-        product
-        for step in product.production_steps:nessecary_components_for_step
+        # product  # This line seems incomplete, commenting out
+        for step in product.production_steps:  # Fixed syntax error
             if step == product.current_step:
                 needed_products.append(step)
         return needed_products
 
 
-
-
-       # possibility to add and remove tasks(Aufträge)  
+    # possibility to add and remove tasks(Aufträge)  
     @property
     def tasklist(self):
         pass

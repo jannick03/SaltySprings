@@ -6,6 +6,10 @@ from box import box
 import time
 import os
 
+
+def is_significantly_different(set_a, set_b, tolerance):
+    return len(set_a.symmetric_difference(set_b)) >= tolerance
+
 base_path = os.path.dirname(__file__)
 weights_path = os.path.join(base_path, "weights.pt")
 model = YOLO(weights_path)
@@ -31,7 +35,7 @@ while True:
     current_classes = set(results[0].boxes.cls.cpu().numpy().astype(int))
     new_classes = current_classes - seen_classes
 
-    if new_classes:
+    if is_significantly_different(current_classes, seen_classes, tolerance=1):
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         filename = f"photo_{timestamp}_{photo_counter}.jpg"
         cv2.imwrite(filename, frame)
@@ -59,5 +63,7 @@ while True:
 for box in boxes:
     print(box)
 
+
 cap.release()
 cv2.destroyAllWindows()
+

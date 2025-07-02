@@ -71,7 +71,7 @@ while True:
     seen_classes = current_classes
 
     cv2.imshow("YOLOv8 Live", annotated_frame)
-
+    time.sleep(1)
     if key == ord('q'):
         break
 

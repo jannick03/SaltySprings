@@ -9,7 +9,7 @@ import os
 base_path = os.path.dirname(__file__)
 weights_path = os.path.join(base_path, "weights.pt")
 model = YOLO(weights_path)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 if not cap.isOpened():
     print("Cannot open camera")

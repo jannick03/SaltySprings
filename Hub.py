@@ -1,10 +1,7 @@
-
-from queue import Queue
 from product import product
 from productionstep import production_step
 from typing import TYPE_CHECKING, List
-import box
-from Hub import Hub
+import Hub
 
 if TYPE_CHECKING:
     import machine
@@ -18,61 +15,17 @@ class Hub:
     hubs: list # List of other hubs connected to this hub
     component_storage: list # Queue for processing tasks
     products_in_production: list # List of products currently in production
-    product_list: list # list of products # eine liste an anstehenden Produkten, kann auch in Aufträgen wieter klassifiziert werden
-    tasks: list[order]  # List of product to be produced
 
 
-    def __init__(self, id: str, machines: list, hubs: list, queue: list, machines_producing: list, products_in_production: list, product_list: list, tasks: list[order]):
+
+    def __init__(self, id: str, machines: list, hubs: list, queue: list, machines_producing: list, products_in_production: list):
         self.id = id
         self.machines = machines
         self.hubs = hubs
-        self.queue = queue
+        self.queue = []
         # self.machines_producing = machines_producing
         self.products_in_production = products_in_production
-        self.product_list = product_list
-        self.tasks = tasks
 
-    def loop(self) -> None:
-        if self.tasklist:
-            self.initiate_production()
-            self.delegate()
-            
-            # check if products needs to be produced at this hub or at another hub
-            for product in self.product_list: # check if any products is in queue
-                nextHub = product.current_productionstep
-                if self != nextHub:
-                    nextHub.receive(product)
-            else :
-                print("all tasks done!")
-
-
-# checks if machine is free is some product needs the free machine at the current moment and if there are enough items to produce the product at this machine
-    def initiate_production(self) -> None:
-        for free_machine in self.get_free_machines(): # check if any machines in free or producing
-                for product in self.product_list: # check if any products is in queue for this machine
-                    if product.current_step.workstation == free_machine : # check if machine can produce this product
-                        for item in product.needed_components.get(product.current_step): # check if machine has all items needed for this product
-                                if item not in self.component_queue: # check if item is available in the queue
-                                    break  # if an item for a product is not available, break the loop
-                            
-                        current_needed_components = product.needed_components.get(product.current_step)
-                        machine.execute_function(product, current_needed_components)  # start production if all items are available
-                        self.products_in_production.append(product)
-                        self.remove_used_components(current_needed_components)
-
-    def delegate(self):
-        for product in self.queue:
-            if self.machines.__contains__(product.current_productionstep[product.current_step].workstation) :
-                continue
-            else :
-                if self.check_machines_needed_for_product(product)
-
-
-    # checking if machines are producing
-# checking current state of items and products
-# check if product needs machines of other hubs
-
-    # check if hub has needed machines
     def check_machines_needed_for_product(self, product: product) -> Hub:
         for product in self.products_in_production:
             if (product.production_steps == self.machines): #check which machines are needed for the next production step
@@ -102,7 +55,7 @@ class Hub:
     # # check if hub has needed machines
     def check_machines_needed_for_product(self, product: product) -> Hub:
         for product in self.product_list:
-            if (product.production_steps == connected_machines): #check which machines are needed for the next prouction step
+            if (product.production_steps == hub.connected_machines): #check which machines are needed for the next prouction step
                 return self;
             else :
                 for hub in self.hubs:
@@ -164,3 +117,4 @@ class Hub:
 
     def add_to_q(self, box):
         self.queue.append(box)
+

@@ -244,35 +244,20 @@ class HubDashboard:
                     current_step,
                     progress
                 ))
-    
+
     def update_queue_display(self):
         """Update the queue text display"""
         self.queue_text.delete('1.0', tk.END)
-        
-        if hasattr(self.hub, 'queue') and self.hub.queue:
-            self.queue_text.insert(tk.END, f"📦 Hub {self.hub.id} Component Queue\n")
-            self.queue_text.insert(tk.END, "=" * 40 + "\n\n")
-            
-            if hasattr(self.hub.queue, 'boxes') and self.hub.queue.boxes:
-                # Handle both single box and list of boxes
-                boxes_to_display = self.hub.queue.boxes if isinstance(self.hub.queue.boxes, list) else [self.hub.queue.boxes]
-                
-                for box_idx, box_item in enumerate(boxes_to_display, 1):
-                    self.queue_text.insert(tk.END, f"📦 Box {box_idx}:\n")
-                    if hasattr(box_item, 'components') and box_item.components:
-                        for comp_idx, comp in enumerate(box_item.components, 1):
-                            comp_id = getattr(comp, 'component_id', getattr(comp, 'id', 'N/A'))
-                            self.queue_text.insert(tk.END, f"   {comp_idx}. ID: {comp_id} - {comp.name}\n")
-                    else:
-                        self.queue_text.insert(tk.END, "   No components in this box\n")
-                    self.queue_text.insert(tk.END, "\n")
-                    
-                self.queue_text.insert(tk.END, f"📊 Total: {len(boxes_to_display)} boxes in queue\n")
-            else:
-                self.queue_text.insert(tk.END, "📝 Queue is empty\n")
-        else:
+
+        if len(self.hub.queue) == 0:
+            print("Hier")
             self.queue_text.insert(tk.END, "❌ No queue data available\n")
-    
+
+        for i, scanned_box in enumerate(self.hub.queue[-10:]):  # last 10 scanned boxes
+            print("OK")
+            comp_names = ", ".join([comp.name for comp in scanned_box.components])
+            self.queue_text.insert(tk.END, f"Box {i + 1}: {comp_names}\n")
+
     def update_status_display(self):
         """Update the status metrics"""
         # Update Hub ID

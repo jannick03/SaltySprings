@@ -123,7 +123,6 @@ while True:
                 print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
                 photo_counter += 1
                 hub0.add_to_q(box.box(comps))
-                print("ADDED____________________________________________________________________________________")
 
             last_photo_time = current_time
             rdy_new = False

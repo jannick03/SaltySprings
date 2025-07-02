@@ -367,6 +367,7 @@ class HubDashboard:
     def run(self):
         """Start the dashboard"""
         self.root.update()
+        self.update_dashboard()
 
 
 # Function to create dashboard from main.py

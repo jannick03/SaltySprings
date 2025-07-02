@@ -12,9 +12,9 @@ from order import order
 class Hub:
     # Public attributes
     id: str # Unique identifier for the hub
-    connected_machines: list # List of machines connected to the hub 
+    machines: list # List of machines connected to the hub
     hubs: list # List of other hubs connected to this hub
-    component_queue: list # Queue for processing tasks
+    component_storage: list # Queue for processing tasks
     products_in_production: list # List of products currently in production
     product_list: list # list of products # eine liste an anstehenden Produkten, kann auch in Aufträgen wieter klassifiziert werden
     tasks: list[order]  # List of product to be produced

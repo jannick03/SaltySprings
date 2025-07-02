@@ -19,6 +19,7 @@ class machine:
             return f"Maschine {self.id} ({self.name}) is performing step '{current_step}' for product '{product.name}'."
         else:
             return f"Maschine {self.id} ({self.name}) has completed all steps for product '{product.name}'."
+        # kommentar
 
     def get_info(self) -> str:
         return f"Maschine ID: {self.id}, Name: {self.name}, Funktion: {self.funktion}, Status: {self.status}"

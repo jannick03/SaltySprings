@@ -6,10 +6,10 @@ from components import component
 class box:
     counter = 1
 
-    def __init__(self, items: List['component']):
+    def __init__(self, components: List['component']):
         self.id = box.counter
         box.counter += 1
-        self.items = items
+        self.components = components
 
     def __str__(self):
         result = f"Box ID: {self.id}\n"

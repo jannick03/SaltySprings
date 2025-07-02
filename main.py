@@ -3,7 +3,7 @@ from components import component
 from ultralytics import YOLO
 import cv2
 from box import box
-
+import time
 import os
 
 base_path = os.path.dirname(__file__)
@@ -17,6 +17,8 @@ if not cap.isOpened():
 
 boxes = []
 
+seen_classes = set()
+photo_counter = 0
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -26,22 +28,28 @@ while True:
     results = model(frame)
     annotated_frame = results[0].plot()
     key = cv2.waitKey(1) & 0xFF
+    current_classes = set(results[0].boxes.cls.cpu().numpy().astype(int))
+    new_classes = current_classes - seen_classes
 
-    if key == ord('p'):
-        # Get class indices from results
+    if new_classes:
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        filename = f"photo_{timestamp}_{photo_counter}.jpg"
+        cv2.imwrite(filename, frame)
+        print(f"[+] Neues Objekt erkannt, Foto gespeichert als {filename}")
+        photo_counter += 1
+
         class_ids = results[0].boxes.cls.cpu().numpy().astype(int)
-
-        # Get class names from model
         class_names = [model.names[c] for c in class_ids]
 
         components: List['components'] = []
-        with open("predicted_classes.txt", "w") as f:
-            for class_id in class_ids:
-                name = model.names[class_id]
-                components.append(component(class_id, name))  # Save for the class
+        for class_id in class_ids:
+            name = model.names[class_id]
+            components.append(component(class_id, name))  # Save for the class
 
         if len(components) != 0:
             boxes.append(box(components))
+
+    seen_classes = current_classes
 
     cv2.imshow("YOLOv8 Live", annotated_frame)
 

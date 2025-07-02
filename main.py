@@ -5,6 +5,7 @@ import cv2
 from box import box
 import time
 import os
+from machine import machine
 
 
 def is_significantly_different(set_a, set_b, tolerance):
@@ -19,7 +20,13 @@ if not cap.isOpened():
     print("Cannot open camera")
     exit()
 
-boxes = []
+boxes = [box([component(0, "Anker Typ 7"), component(1, "Buerstenhalter"), component(2, "Getriebedeckel Typ 6"),
+              component(3, "Getriebehause typ 10"), component(4, "Getriebehause typ 6"), component(5, "Getriebehause typ 9"),
+              component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")]),
+        box([component(6, "Magnet Lang"), component(7, "Poltopf-Lang"), component(8, "spange")])
+          ]
+machines = [machine(0, "Spritzguss Maschine", "Herstellung der Gehäuse für das Motorgetriebe", "offline"), machine(1, "Kupferwickelmaschine", "Wicklung der Kupferdrähte für den Rotor", "offline", "offline")]
+
 
 seen_classes = set()
 photo_counter = 0

@@ -15,8 +15,8 @@ class machine:
 
     def execute_function(self, product: 'product'):
         if product.production_steps:
-            next_step = product.production_steps.pop(0)  # Remove the first step
-            return f"Maschine {self.id} ({self.name}) is performing step '{next_step}' for product '{product.name}'."
+            current_step = product.production_steps.pop(0)  # Remove the first step
+            return f"Maschine {self.id} ({self.name}) is performing step '{current_step}' for product '{product.name}'."
         else:
             return f"Maschine {self.id} ({self.name}) has completed all steps for product '{product.name}'."
 

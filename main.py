@@ -43,9 +43,31 @@ while True:
 
     results = model(frame)
     annotated_frame = results[0].plot()
+
+    # Define your capture‐zone as a vertical band in the middle:
+    h, w = frame.shape[:2]
+    y_min, y_max = int(h * 0.45), int(h * 0.55)  # e.g. middle 10% of height
+    x_min, x_max = int(w * 0.30), int(w * 0.70)  # optional: also restrict horizontally
+
+    xyxy = results[0].boxes.xyxy.cpu().numpy()  # shape: (N,4) as [x1, y1, x2, y2]
+    valid_idx = []
+    for i, (x1, y1, x2, y2) in enumerate(xyxy):
+        cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+        if (x_min < cx < x_max) and (y_min < cy < y_max):
+            valid_idx.append(i)
+
+    # Only keep detections that are “under” the camera
+    if not valid_idx:
+        current_classes = set()
+    else:
+        cls = results[0].boxes.cls.cpu().numpy().astype(int)
+        current_classes = set(cls[valid_idx])
+
     key = cv2.waitKey(1) & 0xFF
-    current_classes = set(results[0].boxes.cls.cpu().numpy().astype(int))
     new_classes = current_classes - seen_classes
+
+    if not current_classes:
+        rdy_new = True
 
     if is_significantly_different(current_classes, seen_classes, tolerance=1) & rdy_new:
         timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -62,11 +84,8 @@ while True:
             name = model.names[class_id]
             comps.append(components.component(class_id, name))  # Save for the class
 
-        if len(comps) != 0:
-            boxes.append(box.box(comps))
-            rdy_new = False
-        else:
-            rdy_new = True
+        boxes.append(box.box(comps))
+        rdy_new = False
 
     seen_classes = current_classes
 

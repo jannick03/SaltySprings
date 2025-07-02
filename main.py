@@ -85,7 +85,8 @@ while True:
             name = model.names[class_id]
             comps.append(components.component(class_id, name))  # Save for the class
 
-        boxes.append(box.box(comps))
+        if len(comps) > 0:
+            boxes.append(box.box(comps))
         rdy_new = False
 
     seen_classes = current_classes
@@ -96,7 +97,6 @@ while True:
 
 for box in boxes:
     print(box)
-
 
 cap.release()
 cv2.destroyAllWindows()

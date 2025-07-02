@@ -2,8 +2,12 @@
 from queue import Queue
 from product import product
 from productionstep import production_step
-from machine import machine
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import machine
 from order import order
+
 
 class Hub:
     # Public attributes
@@ -13,7 +17,7 @@ class Hub:
     component_queue: list # Queue for processing tasks
     products_in_production: list # List of products currently in production
     product_list: list # list of products # eine liste an anstehenden Produkten, kann auch in Aufträgen wieter klassifiziert werden
-    tasks: list(order) # List of product to be produced
+    tasks: list[order]  # List of product to be produced
 
     def __init__(self, id: str, machines: list, hubs: list, queue: Queue, machines_producing: list, products_in_production: list):
         self.id = id
@@ -25,7 +29,7 @@ class Hub:
 
     def loop(self) -> None:
         if self.tasklist:
-            self.initiate_production(self)
+            self.initiate_production()
             
             # check if products needs to be produced at this hub or at another hub
             for product in self.product_list: # check if any products is in queue
@@ -38,7 +42,7 @@ class Hub:
 
 # checks if machine is free is some product needs the free machine at the current moment and if there are enough items to produce the product at this machine
     def initiate_production(self) -> None:
-        for free_machine in self.get_free_machines(self): # check if any machines in free or producing
+        for free_machine in self.get_free_machines(): # check if any machines in free or producing
                 for product in self.product_list: # check if any products is in queue for this machine
                     if product.current_step.workstation == free_machine : # check if machine can produce this product
                         for item in product.needed_components.get(product.current_step): # check if machine has all items needed for this product
@@ -75,7 +79,7 @@ class Hub:
                 available_machines.append(machine)
             else:
                 continue
-        return available_machines;
+        return available_machines
 
     def produced_product(self, product: product):
         self.products_in_production.remove(product)
@@ -112,7 +116,7 @@ class Hub:
             self.component_queue.append(each_component)
 
     def get_production_step_of(self, product) -> production_step:
-        return product.current_step;
+        return product.current_step
 
     def needed_products_for_next_step(self, product: product) -> list:
         needed_products = []

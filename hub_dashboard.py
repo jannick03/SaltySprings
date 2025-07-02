@@ -250,16 +250,28 @@ class HubDashboard:
         self.queue_text.delete('1.0', tk.END)
         
         if hasattr(self.hub, 'queue') and self.hub.queue:
-            self.queue_text.insert(tk.END, "Component Queue Contents:\n")
+            self.queue_text.insert(tk.END, f"📦 Hub {self.hub.id} Component Queue\n")
             self.queue_text.insert(tk.END, "=" * 40 + "\n\n")
             
-            if hasattr(self.hub.queue, 'components'):
-                for i, component in enumerate(self.hub.queue.components, 1):
-                    self.queue_text.insert(tk.END, f"{i}. ID: {component.id} - {component.name}\n")
+            if hasattr(self.hub.queue, 'boxes') and self.hub.queue.boxes:
+                # Handle both single box and list of boxes
+                boxes_to_display = self.hub.queue.boxes if isinstance(self.hub.queue.boxes, list) else [self.hub.queue.boxes]
+                
+                for box_idx, box_item in enumerate(boxes_to_display, 1):
+                    self.queue_text.insert(tk.END, f"📦 Box {box_idx}:\n")
+                    if hasattr(box_item, 'components') and box_item.components:
+                        for comp_idx, comp in enumerate(box_item.components, 1):
+                            comp_id = getattr(comp, 'component_id', getattr(comp, 'id', 'N/A'))
+                            self.queue_text.insert(tk.END, f"   {comp_idx}. ID: {comp_id} - {comp.name}\n")
+                    else:
+                        self.queue_text.insert(tk.END, "   No components in this box\n")
+                    self.queue_text.insert(tk.END, "\n")
+                    
+                self.queue_text.insert(tk.END, f"📊 Total: {len(boxes_to_display)} boxes in queue\n")
             else:
-                self.queue_text.insert(tk.END, "Queue structure not accessible\n")
+                self.queue_text.insert(tk.END, "📝 Queue is empty\n")
         else:
-            self.queue_text.insert(tk.END, "No queue data available\n")
+            self.queue_text.insert(tk.END, "❌ No queue data available\n")
     
     def update_status_display(self):
         """Update the status metrics"""
@@ -278,7 +290,17 @@ class HubDashboard:
         self.status_labels['products_count'].config(text=str(products_count))
         
         # Update queue size
-        queue_size = len(self.hub.queue.components) if hasattr(self.hub, 'queue') and hasattr(self.hub.queue, 'components') else 0
+        queue_size = 0
+        if hasattr(self.hub, 'queue') and self.hub.queue and hasattr(self.hub.queue, 'boxes'):
+            if isinstance(self.hub.queue.boxes, list):
+                # Count total components in all boxes
+                for box in self.hub.queue.boxes:
+                    if hasattr(box, 'components') and box.components:
+                        queue_size += len(box.components)
+            else:
+                # Single box case
+                if hasattr(self.hub.queue.boxes, 'components') and self.hub.queue.boxes.components:
+                    queue_size = len(self.hub.queue.boxes.components)
         self.status_labels['queue_size'].config(text=str(queue_size))
         
         # Update hub status based on active machines
@@ -342,7 +364,7 @@ class HubDashboard:
             f.write("Machines:\n")
             if hasattr(self.hub, 'machines') and self.hub.machines:
                 for machine in self.hub.machines:
-                    f.write(f"  - {machine.name} (ID: {machine.id}): {machine.status}\n")
+                    f.write(f"  - {machine.name} (ID: {machine.mashine_id}): {machine.status}\n")
             
             f.write(f"\nProducts in Production: {len(self.hub.products_in_production) if hasattr(self.hub, 'products_in_production') and self.hub.products_in_production else 0}\n")
             

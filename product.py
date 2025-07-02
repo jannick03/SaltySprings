@@ -7,7 +7,7 @@ from productionstep import production_step
 class product:
     product_id = 1
 
-    def __init__(self, name: str, steps: List['production_step'], components: List['component'], 
+    def __init__(self, name: str, steps: List['production_step'], components: List['component'],
                  nessecary_components_for_step: List[List['component']]):
         self.name = name
         self.id = product.product_id
